@@ -8,6 +8,8 @@ from sqlalchemy.ext.asyncio import (
     create_async_engine
     )
 
+from chat.models.base import Base
+
 async_session_maker: async_sessionmaker[AsyncSession] | None = None
 async_engine: AsyncEngine | None = None
 
@@ -20,6 +22,8 @@ async def init_db():
     )
 
     async_session_maker = async_sessionmaker(async_engine)
+
+    Base.metadata.create_all()
 
 
 async def clean_db():
