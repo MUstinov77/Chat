@@ -1,6 +1,12 @@
-from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine, AsyncEngine, AsyncSession
-from fastapi import Depends
 from typing import Annotated
+
+from fastapi import Depends
+from sqlalchemy.ext.asyncio import (
+    AsyncEngine,
+    AsyncSession,
+    async_sessionmaker,
+    create_async_engine
+    )
 
 async_session_maker: async_sessionmaker[AsyncSession] | None = None
 async_engine: AsyncEngine | None = None

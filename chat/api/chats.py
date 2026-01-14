@@ -1,11 +1,11 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, status, Query
+from fastapi import APIRouter, Depends, Query, status
 from fastapi.exceptions import HTTPException
 
-from chat.service.chat import get_chat_service, ChatService
-from chat.schemas.chat import ChatRetrieve, ChatCreateUpdate
+from chat.schemas.chat import ChatCreateUpdate, ChatRetrieve
 from chat.schemas.message import MessageCreate, MessageRetrieve
+from chat.service.chat import ChatService, get_chat_service
 from chat.service.message import MessageService
 
 chat_router = APIRouter(

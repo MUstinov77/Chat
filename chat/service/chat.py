@@ -1,13 +1,14 @@
-from fastapi import Depends
-
 from typing import Annotated
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
 
-from chat.service.base import BaseService
+from fastapi import Depends
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from chat.core.datastore import async_session_provider
 from chat.models.chat import Chat
 from chat.models.message import Message
-from chat.core.datastore import async_session_provider
+from chat.service.base import BaseService
+
 
 def get_chat_service(
     session: Annotated[AsyncSession, Depends(async_session_provider)]

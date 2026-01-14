@@ -1,6 +1,5 @@
 from fastapi.exceptions import HTTPException
 from sqlalchemy import delete, select, update
-
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 

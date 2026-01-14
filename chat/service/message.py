@@ -1,10 +1,11 @@
-from fastapi import Depends
 from typing import Annotated
-from chat.models.message import Message
+
+from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
-from chat.service.base import BaseService
 
 from chat.core.datastore import async_session_provider
+from chat.models.message import Message
+from chat.service.base import BaseService
 
 
 def get_message_service(
