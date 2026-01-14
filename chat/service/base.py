@@ -22,6 +22,11 @@ class BaseService:
         result = await self.session.execute(query)
         return result.scalars().first()
 
+    async def retrieve_all(self):
+        query = select(self.model)
+        result = await self.session.execute(query)
+        return result.scalars().all()
+
     async def retrieve_all_by_field(self, field, field_value):
         query = select(self.model).where(field == field_value) # noqa
         result = await self.session.execute(query)
