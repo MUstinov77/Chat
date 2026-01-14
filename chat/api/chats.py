@@ -46,8 +46,8 @@ async def crete_new_chat(
 )
 async def get_chat_by_id(
         chat_id: int,
-        messages_limit: Annotated[int | None, Query(default=20, le=100)],
-        chat_service: Annotated[ChatService, Depends(get_chat_service)]
+        chat_service: Annotated[ChatService, Depends(get_chat_service)],
+        messages_limit: Annotated[int | None, Query(le=100)] = 20,
 ):
     chat = await chat_service.retrieve_one(chat_id, messages_limit)
     return chat
@@ -55,15 +55,14 @@ async def get_chat_by_id(
 
 @chat_router.delete(
     "/{chat_id}",
-    response_model=ChatRetrieve,
     status_code=status.HTTP_204_NO_CONTENT
 )
 async def delete_chat_by_id(
         chat_id: int,
         chat_service: Annotated[ChatService, Depends(get_chat_service)]
 ):
-    chat = await chat_service.delete_instance(chat_id)
-    return chat
+    await chat_service.delete_instance(chat_id)
+    return
 
 
 @chat_router.post(
