@@ -49,7 +49,7 @@ async def get_chat_by_id(
         messages_limit: Annotated[int | None, Query(default=20, le=100)],
         chat_service: Annotated[ChatService, Depends(get_chat_service)]
 ):
-    chat = chat_service.retrieve_one(chat_id)
+    chat = chat_service.retrieve_one(chat_id, messages_limit)
     return chat
 
 

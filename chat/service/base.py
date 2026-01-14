@@ -17,7 +17,7 @@ class BaseService:
         await self.session.commit()
         return record
 
-    async def retrieve_one(self, obj_id: int):
+    async def retrieve_one(self, obj_id: int, *args, **kwargs):
         query = select(self.model).where(self.model.id == obj_id)
         result = await self.session.execute(query)
         return result.scalars().first()
