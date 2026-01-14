@@ -5,8 +5,8 @@ from fastapi.exceptions import HTTPException
 
 from chat.service.chat import get_chat_service, ChatService
 from chat.schemas.chat import ChatRetrieve, ChatCreateUpdate
-from chat.schemas.message import MessageCreate
-
+from chat.schemas.message import MessageCreate, MessageRetrieve
+from chat.service.message import MessageService
 
 chat_router = APIRouter(
     prefix="/chats",
@@ -20,7 +20,7 @@ chat_router = APIRouter(
 async def get_all_chats(
         chat_service: Annotated[ChatService, Depends(get_chat_service)]
 ):
-    chats = chat_service.retrieve_all()
+    chats = await chat_service.retrieve_all()
     if not chats:
         raise HTTPException(status_code=404, detail="Chats not found")
     return chats
@@ -36,7 +36,7 @@ async def crete_new_chat(
         chat_service: Annotated[ChatService, Depends(get_chat_service)],
 ):
     chat_data = data.model_dump()
-    chat = chat_service.create_instance(chat_data)
+    chat = await chat_service.create_instance(chat_data)
     return chat
 
 
@@ -49,7 +49,7 @@ async def get_chat_by_id(
         messages_limit: Annotated[int | None, Query(default=20, le=100)],
         chat_service: Annotated[ChatService, Depends(get_chat_service)]
 ):
-    chat = chat_service.retrieve_one(chat_id, messages_limit)
+    chat = await chat_service.retrieve_one(chat_id, messages_limit)
     return chat
 
 
@@ -62,5 +62,23 @@ async def delete_chat_by_id(
         chat_id: int,
         chat_service: Annotated[ChatService, Depends(get_chat_service)]
 ):
-    chat = chat_service.delete_instance(chat_id)
+    chat = await chat_service.delete_instance(chat_id)
     return chat
+
+
+@chat_router.post(
+    "/{chat_id}/messages",
+    response_model=MessageRetrieve,
+    status_code=status.HTTP_201_CREATED
+)
+async def send_message(
+        chat_id: int,
+        data: MessageCreate,
+        chat_service: Annotated[MessageService, Depends(get_chat_service)]
+):
+    message_data = data.model_dump()
+    message_data["chat_id"] = chat_id
+    message = await chat_service.create_instance(message_data)
+    if not message:
+        ...
+    return message
