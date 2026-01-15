@@ -1,3 +1,4 @@
+from pyexpat.errors import messages
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, Query, status
@@ -6,7 +7,7 @@ from fastapi.exceptions import HTTPException
 from chat.schemas.chat import ChatCreateUpdate, ChatRetrieve
 from chat.schemas.message import MessageCreate, MessageRetrieve
 from chat.service.chat import ChatService, get_chat_service
-from chat.service.message import MessageService
+from chat.service.message import MessageService, get_message_service
 
 chat_router = APIRouter(
     prefix="/chats",
@@ -37,6 +38,7 @@ async def crete_new_chat(
 ):
     chat_data = data.model_dump()
     chat = await chat_service.create_instance(chat_data)
+    await chat_service.session.refresh(chat)
     return chat
 
 
@@ -47,7 +49,7 @@ async def crete_new_chat(
 async def get_chat_by_id(
         chat_id: int,
         chat_service: Annotated[ChatService, Depends(get_chat_service)],
-        messages_limit: Annotated[int | None, Query(le=100)] = 20,
+        messages_limit: Annotated[int | None, Query(le=100, ge=20)] = 20,
 ):
     chat = await chat_service.retrieve_one(chat_id, messages_limit)
     return chat
@@ -62,7 +64,7 @@ async def delete_chat_by_id(
         chat_service: Annotated[ChatService, Depends(get_chat_service)]
 ):
     await chat_service.delete_instance(chat_id)
-    return
+    return {"message": "chat deleted"}
 
 
 @chat_router.post(
@@ -73,11 +75,13 @@ async def delete_chat_by_id(
 async def send_message(
         chat_id: int,
         data: MessageCreate,
-        chat_service: Annotated[MessageService, Depends(get_chat_service)]
+        chat_service: Annotated[MessageService, Depends(get_chat_service)],
+        message_service: Annotated[MessageService, Depends(get_message_service)]
 ):
     message_data = data.model_dump()
     message_data["chat_id"] = chat_id
-    message = await chat_service.create_instance(message_data)
+    message = await message_service.create_instance(message_data)
+    await message_service.session.refresh(message)
     if not message:
         ...
     return message

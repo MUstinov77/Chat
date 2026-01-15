@@ -13,3 +13,5 @@ class ChatRetrieve(BaseModel):
     id: int
     title: str
     created_at: datetime
+
+    messages: list[MessageRetrieve]

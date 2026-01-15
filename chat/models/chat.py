@@ -21,5 +21,6 @@ class Chat(Base):
         "Message",
         uselist=True,
         back_populates="chat",
-        cascade="all, delete"
+        cascade="all, delete",
+        lazy="selectin"
     )
