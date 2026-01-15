@@ -8,7 +8,9 @@ from sqlalchemy.ext.asyncio import (
     create_async_engine
     )
 
-from chat.models.base import Base
+from chat.core.config import get_settings
+
+settings = get_settings()
 
 async_session_maker: async_sessionmaker[AsyncSession] | None = None
 async_engine: AsyncEngine | None = None
@@ -17,9 +19,7 @@ async_engine: AsyncEngine | None = None
 async def init_db():
     global async_engine, async_session_maker
 
-    async_engine = create_async_engine(
-        "postgresql+asyncpg://postgres:postgres@localhost:5432/postgres",
-    )
+    async_engine = create_async_engine(settings.DB_URI)
 
     async_session_maker = async_sessionmaker(async_engine)
 
