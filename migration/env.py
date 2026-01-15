@@ -7,6 +7,11 @@ from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from alembic import context
 
+from chat.models.base import Base
+from chat.models.chat import Chat
+from chat.models.message import Message
+from chat.core.config import settings
+
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
@@ -20,7 +25,8 @@ if config.config_file_name is not None:
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
-target_metadata = None
+target_metadata = Base.metadata
+config.set_main_option("sqlalchemy.url", settings.DB_URI)
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
@@ -40,7 +46,7 @@ def run_migrations_offline() -> None:
     script output.
 
     """
-    url = config.get_main_option("sqlalchemy.url")
+    url = config.get_main_option("sqlalchemy.url", settings.DB_URI)
     context.configure(
         url=url,
         target_metadata=target_metadata,
