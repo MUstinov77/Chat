@@ -1,10 +1,8 @@
-from fastapi import FastAPI
+from chat.app_factory import create_app
 
-from chat.api.chats import chat_router
+app = create_app()
 
-app = FastAPI()
-app.include_router(chat_router)
+if __name__ == "__main__":
+    import uvicorn
 
-@app.get("/")
-async def main():
-    return {"message": "Hello World"}
+    uvicorn.run(app, host="0.0.0.0", port=8000)

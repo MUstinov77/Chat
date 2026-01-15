@@ -23,9 +23,6 @@ async def init_db():
 
     async_session_maker = async_sessionmaker(async_engine)
 
-    Base.metadata.create_all()
-
-
 async def clean_db():
     global async_engine
 
