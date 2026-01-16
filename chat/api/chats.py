@@ -1,9 +1,9 @@
-from pyexpat.errors import messages
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, Query, status
 from fastapi.exceptions import HTTPException
 
+from chat.core.excpetions import NotFoundException
 from chat.schemas.chat import ChatCreateUpdate, ChatRetrieve
 from chat.schemas.message import MessageCreate, MessageRetrieve
 from chat.service.chat import ChatService, get_chat_service
@@ -23,7 +23,7 @@ async def get_all_chats(
 ):
     chats = await chat_service.retrieve_all()
     if not chats:
-        raise HTTPException(status_code=404, detail="Chats not found")
+        raise NotFoundException
     return chats
 
 
@@ -38,6 +38,8 @@ async def crete_new_chat(
 ):
     chat_data = data.model_dump()
     chat = await chat_service.create_instance(chat_data)
+    if not chat:
+        raise NotFoundException
     await chat_service.session.refresh(chat)
     return chat
 
@@ -52,6 +54,8 @@ async def get_chat_by_id(
         messages_limit: Annotated[int | None, Query(le=100)] = 20,
 ):
     chat = await chat_service.retrieve_one(chat_id, messages_limit)
+    if not chat:
+        raise NotFoundException
     return chat
 
 
@@ -78,10 +82,13 @@ async def send_message(
         chat_service: Annotated[MessageService, Depends(get_chat_service)],
         message_service: Annotated[MessageService, Depends(get_message_service)]
 ):
+    chat = await chat_service.retrieve_one(chat_id)
+    if not chat:
+        raise NotFoundException
     message_data = data.model_dump()
     message_data["chat_id"] = chat_id
     message = await message_service.create_instance(message_data)
     await message_service.session.refresh(message)
     if not message:
-        ...
+        raise NotFoundException
     return message
