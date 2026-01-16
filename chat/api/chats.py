@@ -49,7 +49,7 @@ async def crete_new_chat(
 async def get_chat_by_id(
         chat_id: int,
         chat_service: Annotated[ChatService, Depends(get_chat_service)],
-        messages_limit: Annotated[int | None, Query(le=100, ge=20)] = 20,
+        messages_limit: Annotated[int | None, Query(le=100)] = 20,
 ):
     chat = await chat_service.retrieve_one(chat_id, messages_limit)
     return chat

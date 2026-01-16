@@ -22,5 +22,6 @@ class Chat(Base):
         uselist=True,
         back_populates="chat",
         cascade="all, delete",
-        lazy="selectin"
+        lazy="selectin",
+        order_by="Message.created_at.asc()"
     )
