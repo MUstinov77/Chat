@@ -1,10 +1,10 @@
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 
 from chat.api.chats import chat_router
-from chat.core.datastore import init_db, clean_db
+from chat.core.datastore import clean_db, init_db
 
-
-from contextlib import asynccontextmanager
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):

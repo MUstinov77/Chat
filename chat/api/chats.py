@@ -1,7 +1,6 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, Query, status
-from fastapi.exceptions import HTTPException
 
 from chat.core.excpetions import NotFoundException
 from chat.schemas.chat import ChatCreateUpdate, ChatRetrieve
