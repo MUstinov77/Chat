@@ -14,7 +14,7 @@ services:
       - .env
   app:
     container_name: chat-backend
-    build: ./chat
+    build: .
     ports:
       - "8000:8000"
     depends_on:

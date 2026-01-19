@@ -2,6 +2,7 @@ from typing import Annotated
 
 from fastapi import Depends
 from sqlalchemy import select
+from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from chat.core.datastore import async_session_provider
@@ -14,6 +15,7 @@ def get_chat_service(
     session: Annotated[AsyncSession, Depends(async_session_provider)]
 ):
     return ChatService(session, Chat)
+
 
 class ChatService(BaseService):
 

@@ -16,7 +16,6 @@ from chat.core.config import settings
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
-config.set_main_option("sqlalchemy.url", settings.DB_URI)
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
@@ -47,7 +46,7 @@ def run_migrations_offline() -> None:
     script output.
 
     """
-    url = config.get_main_option("sqlalchemy.url")
+    url = settings.DB_URI
     context.configure(
         url=url,
         target_metadata=target_metadata,
@@ -71,9 +70,10 @@ async def run_async_migrations() -> None:
     and associate a connection with the context.
 
     """
-
+    payload = config.get_section(config.config_ini_section, {})
+    payload["sqlalchemy.url"] = settings.DB_URI
     connectable = async_engine_from_config(
-        config.get_section(config.config_ini_section, {}),
+        payload,
         prefix="sqlalchemy.",
         poolclass=pool.NullPool,
     )
